@@ -1,0 +1,15 @@
+{
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/**",
+        "/usr/include",
+        "/usr/include/x86_64-linux-gnu",
+        "/usr/include/x86_64-linux-gnu/qt6",
+        "/usr/include/x86_64-linux-gnu/qt6/QtCore",
+        "/usr/include/x86_64-linux-gnu/qt6/QtNetwork",
+        "/usr/include/x86_64-linux-gnu/qt6/QtWebSockets",
+        "/usr/include/x86_64-linux-gnu/qt6/QtWidgets",
+        "/usr/include/x86_64-linux-gnu/qt6/QtConcurrent",
+        "/usr/include/x86_64-linux-gnu/qt6/QtTest",
+        "/usr/include/x86_64-linux-gnu/qt6/QtGui",
+    ],
+}
