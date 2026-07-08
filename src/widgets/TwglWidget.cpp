@@ -1,5 +1,14 @@
 #include "TwglWidget.h"
-#include <time.h>
+#include <QDir>
+#include <QProcessEnvironment>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QFlag>
+
+TwglWidget::~TwglWidget()
+{
+    glDeleteProgram(m_shaderProgram);
+}
 
 std::unique_ptr<QString> TwglWidget::loadShaderForUrl(QString url)
 {
@@ -8,6 +17,10 @@ std::unique_ptr<QString> TwglWidget::loadShaderForUrl(QString url)
     if (!shaderFile.open(QIODevice::ReadOnly))
     {
         qWarning() << "Failed to open shader for url: " << url;
+
+        QString title("Error");
+        QString text("Shader for url " + url + " was NOT found");
+        QMessageBox::critical(nullptr, title, text);
 
         throw -1;
     }
@@ -31,28 +44,15 @@ void TwglWidget::initializeGL()
 {
     initializeOpenGLFunctions();
 
-    srand(0);
     /**
      * Set default (on-reset) background color
      */
-    glClearColor((rand() % 100) / 100, 0, 0, 1);
+    glClearColor(0, 0, 0, 1);
 
     /**
      * Enable depth test with depth buffer
      */
-    glEnable(GL_DEPTH_TEST);
-
-    const float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f};
-
-    /**
-     * Generate buffers & bind VBO
-     */
-    glGenBuffers(1, &m_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // glEnable(GL_DEPTH_TEST);
 
     /**
      * Create program, shaders and attach them
@@ -61,13 +61,15 @@ void TwglWidget::initializeGL()
     m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
     m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-    auto vertexShaderSource = loadShaderForUrl(QString("./shaders/vertex.glsl"));
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
+    auto vertexShaderSource = loadShaderForUrl(QDir().absoluteFilePath(env.value("TWGL_VERTEX_SHADER", "C:/Users/wqr/Desktop/gltest/shaders/vertex.glsl")));
     auto vertexShaderStr = vertexShaderSource->toStdString();
     auto vertexShaderCStr = vertexShaderStr.c_str();
     auto vertexShaderSize = (GLint)vertexShaderSource->size();
     glShaderSource(m_vertexShader, 1, &vertexShaderCStr, &vertexShaderSize);
 
-    auto fragmentShaderSource = loadShaderForUrl(QString("./shaders/fragment.glsl"));
+    auto fragmentShaderSource = loadShaderForUrl(QDir().absoluteFilePath(env.value("TWGL_FRAGMENT_SHADER", "C:/Users/wqr/Desktop/gltest/shaders/fragment.glsl")));
     auto fragmentShaderStr = fragmentShaderSource->toStdString();
     auto fragmentShaderCStr = fragmentShaderStr.c_str();
     auto fragmentShaderSize = (GLint)fragmentShaderSource->size();
@@ -84,8 +86,9 @@ void TwglWidget::initializeGL()
      */
     glLinkProgram(m_shaderProgram);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, nullptr);
-    glEnableVertexAttribArray(0);
+    m_testCube = std::make_unique<Cube>();
+
+    m_testCube->upload();
 
     glUseProgram(m_shaderProgram);
 
@@ -106,9 +109,13 @@ void TwglWidget::resizeGL(int w, int h)
 
 void TwglWidget::paintGL()
 {
+    glUseProgram(m_shaderProgram);
+
     /**
      * Clear the screen
      */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    if (m_testCube)
+        m_testCube->draw();
 }

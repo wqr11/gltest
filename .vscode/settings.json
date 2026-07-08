@@ -20,5 +20,6 @@
         "C:/Qt/6.11.1/msvc2022_64/include/QtTest",
         "C:/Qt/6.11.1/msvc2022_64/include/QtGui",
         "C:/Qt/6.11.1/msvc2022_64/include/QtOpenGLWidgets",
+        "C:/glm/include"
     ],
 }

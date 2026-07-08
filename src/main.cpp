@@ -9,6 +9,8 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+    qDebug() << "START";
+
     QApplication app(argc, argv);
 
     QMainWindow w;
