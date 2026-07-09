@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    qDebug() << "START";
+    qDebug() << "[APPLICATION] STARTING";
 
     QApplication app(argc, argv);
 

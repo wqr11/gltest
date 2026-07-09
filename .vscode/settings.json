@@ -1,6 +1,9 @@
 {
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/**",
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/src/**",
+        "${workspaceFolder}/src/geometry",
         "/usr/include",
         "/usr/include/x86_64-linux-gnu",
         "/usr/include/x86_64-linux-gnu/qt6",

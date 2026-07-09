@@ -1,16 +1,16 @@
-#include "TwglWidget.h"
-#include <QDir>
-#include <QProcessEnvironment>
+#include <QFile>
 #include <QMessageBox>
-#include <QPushButton>
-#include <QFlag>
+#include <QProcessEnvironment>
+#include <QDir>
+#include "Designer.h"
+#include "Cube.h"
 
-TwglWidget::~TwglWidget()
+Designer::~Designer()
 {
     glDeleteProgram(m_shaderProgram);
 }
 
-std::unique_ptr<QString> TwglWidget::loadShaderForUrl(QString url)
+std::unique_ptr<QString> Designer::loadShaderForUrl(QString url)
 {
     QFile shaderFile(url);
 
@@ -32,15 +32,7 @@ std::unique_ptr<QString> TwglWidget::loadShaderForUrl(QString url)
     return shader;
 }
 
-TwglWidget::TwglWidget(QWidget *parent) : QOpenGLWidget(parent)
-{
-    /**
-     * To capture keyboard input
-     */
-    setFocusPolicy(Qt::StrongFocus);
-}
-
-void TwglWidget::initializeGL()
+Designer::Designer()
 {
     initializeOpenGLFunctions();
 
@@ -52,7 +44,8 @@ void TwglWidget::initializeGL()
     /**
      * Enable depth test with depth buffer
      */
-    // glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     /**
      * Create program, shaders and attach them
@@ -78,6 +71,35 @@ void TwglWidget::initializeGL()
     glCompileShader(m_vertexShader);
     glCompileShader(m_fragmentShader);
 
+    /**
+     * 1) Check VERTEX_SHADER compile errors
+     */
+    GLint success;
+    glGetShaderiv(m_vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        char infoLog[512];
+        glGetShaderInfoLog(m_vertexShader, 512, nullptr, infoLog);
+        QString title("VERTEX SHADER COMPILATION ERROR");
+        QString text("[[ OPENGL LOGS ]]" + QString(infoLog));
+        QMessageBox::critical(nullptr, title, text);
+        throw std::runtime_error("Vertex shader error");
+    }
+
+    /**
+     * 2) Check FRAGMENT_SHADER compile errors
+     */
+    glGetShaderiv(m_fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        char infoLog[512];
+        glGetShaderInfoLog(m_fragmentShader, 512, nullptr, infoLog);
+        QString title("FRAGMENT SHADER COMPILATION ERROR");
+        QString text("[[ OPENGL LOGS ]]" + QString(infoLog));
+        QMessageBox::critical(nullptr, title, text);
+        throw std::runtime_error("Vertex shader error");
+    }
+
     glAttachShader(m_shaderProgram, m_vertexShader);
     glAttachShader(m_shaderProgram, m_fragmentShader);
 
@@ -86,36 +108,29 @@ void TwglWidget::initializeGL()
      */
     glLinkProgram(m_shaderProgram);
 
-    m_testCube = std::make_unique<Cube>();
-
-    m_testCube->upload();
+    /**
+     * 3) Check PROGRAM_LINK errors
+     */
+    glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &success);
+    if (!success)
+    {
+        char infoLog[512];
+        glGetProgramInfoLog(m_shaderProgram, 512, nullptr, infoLog);
+        QString title("PROGRAM LIKNING ERROR");
+        QString text("[[ OPENGL LOGS ]]" + QString(infoLog));
+        QMessageBox::critical(nullptr, title, text);
+        throw std::runtime_error("[OPENGL] Program link error");
+    }
+    // END
 
     glUseProgram(m_shaderProgram);
 
     /**
      * Program is now linked, we do not need separate shaders now
      */
-    glDeleteShader(m_vertexShader);
-    glDeleteShader(m_fragmentShader);
+    // glDeleteShader(m_vertexShader);
+    // glDeleteShader(m_fragmentShader);
 
     qDebug()
-        << "OpenGL initialized!";
-}
-
-void TwglWidget::resizeGL(int w, int h)
-{
-    glViewport(0, 0, w, h);
-}
-
-void TwglWidget::paintGL()
-{
-    glUseProgram(m_shaderProgram);
-
-    /**
-     * Clear the screen
-     */
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    if (m_testCube)
-        m_testCube->draw();
+        << "[APPLICATION] OpenGL initialized!";
 }

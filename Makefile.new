@@ -1,0 +1,34 @@
+msvc:
+	bash -c "\
+		cd build &&\
+		USE_MSVC=1\
+		cmake --build ."
+
+force_msvc:
+	bash -c "\
+		mkdir -p build &&\
+		rm -rf ./build/*\
+		cd build &&\
+		cmake ../"
+	make msvc
+
+# DOES NOT WORK
+mingw:
+	bash -c "\
+		cd build &&\
+		cmake --build ."
+
+force_mingw:
+	bash -c "\
+		mkdir -p build &&\
+		rm -rf ./build/* &&\
+		cd build &&\
+		cmake ../"
+	make mingw
+# TIL HERE
+
+run:
+	bash -c "
+	TWGL_VERTEX_SHADER=C:/Users/wqr/Desktop/gltest/shaders/vertex.glsl\
+	TWGL_FRAGMENT_SHADER=C:/Users/wqr/Desktop/gltest/shaders/fragment.glsl\
+	./build/Debug/GLTEST.exe"

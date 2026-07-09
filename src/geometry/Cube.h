@@ -1,24 +1,27 @@
-#include <Mesh.h>
+#pragma once
 
-class Cube : public Mesh
+#include <vector>
+#include "Object.h"
+
+class Cube : public Object
 {
 public:
-    Cube()
+    Cube(Designer *__ds) : Object(__ds)
     {
-        vertices = {
-            // Front face (z = 0)
-            {0, 0, 0}, // 0
-            {0, 1, 0}, // 1
-            {1, 1, 0}, // 2
-            {1, 0, 0}, // 3
-            // Back face (z = 1)
-            {0, 0, 1}, // 4
-            {0, 1, 1}, // 5
-            {1, 1, 1}, // 6
-            {1, 0, 1}  // 7
+        std::vector<Vertex> t_vertices = {
+            // Front face (z = -0.5)
+            {-0.5f, -0.5f, -0.5f}, // 0
+            {-0.5f, 0.5f, -0.5f},  // 1
+            {0.5f, 0.5f, -0.5f},   // 2
+            {0.5f, -0.5f, -0.5f},  // 3
+            // Back face (z = 0.5)
+            {-0.5f, -0.5f, 0.5f}, // 4
+            {-0.5f, 0.5f, 0.5f},  // 5
+            {0.5f, 0.5f, 0.5f},   // 6
+            {0.5f, -0.5f, 0.5f}   // 7
         };
 
-        indices = {
+        std::vector<uint32_t> t_indices = {
             // Front face
             0, 1, 2,
             0, 2, 3,
@@ -37,5 +40,7 @@ public:
             // Top face
             1, 5, 6,
             1, 6, 2};
+
+        meshes.emplace_back(std::move(t_vertices), std::move(t_indices));
     }
 };
