@@ -15,8 +15,14 @@ class TwglWidget : public QOpenGLWidget
 protected:
     bool m_mousePressed = false;
 
+    int m_stepPx = 100;
+
+    QPoint m_lastMousePos;
+
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 
 public:
     TwglWidget(QWidget *parent = nullptr);

@@ -5,6 +5,7 @@
 
 class Cube : public Object
 {
+
 public:
     Cube(Designer *__ds) : Object(__ds)
     {
