@@ -1,0 +1,5 @@
+1) Static build needed QT libraries and add to target_link_libraries(..)
+
+2) Add textures
+
+3) Add model import (Bazis or Assimp)
