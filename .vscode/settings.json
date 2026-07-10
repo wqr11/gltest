@@ -4,6 +4,7 @@
         "${workspaceFolder}/src",
         "${workspaceFolder}/src/**",
         "${workspaceFolder}/src/geometry",
+        "${workspaceFolder}/src/shaders",
         "/usr/include",
         "/usr/include/x86_64-linux-gnu",
         "/usr/include/x86_64-linux-gnu/qt6",
