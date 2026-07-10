@@ -23,14 +23,17 @@ protected:
     GLuint m_ibo; // Index Buffer Object
     Designer *ds = nullptr;
     std::vector<MeshDrawCommand> m_mesh_cmds;
+    std::vector<Mesh> meshes;
+    std::vector<Object> children;
 
 public:
     Object(Designer *__ds) : ds(__ds) {};
 
-    std::vector<Mesh> meshes;
     glm::mat4 modelMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
-    std::vector<Object> children;
 
+    /**
+     * @TODO: Rewrite for glMultiDrawElementsIndirect
+     */
     void upload(bool isStatic = false)
     {
         if (meshes.empty() && children.empty())
