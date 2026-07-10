@@ -13,11 +13,11 @@ class TwglWidget : public QOpenGLWidget
     Q_OBJECT
 
 protected:
-    bool m_mousePressed = false;
+    bool mousePressed = false;
 
-    int m_stepPx = 100;
+    int stepPx = 100;
 
-    QPoint m_lastMousePos;
+    QPoint lastMousePos;
 
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
@@ -28,11 +28,11 @@ protected:
 public:
     TwglWidget(QWidget *parent = nullptr);
 
-    std::unique_ptr<Scene> m_scene;
+    std::unique_ptr<Scene> scene;
 
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
 
-    std::unique_ptr<Designer> m_ds;
+    std::unique_ptr<Designer> ds;
 };

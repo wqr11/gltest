@@ -18,11 +18,11 @@ public:
 class Object
 {
 protected:
-    GLuint m_vao; // Vertex Array Object (settings)
-    GLuint m_vbo; // Vertex Buffer Object
-    GLuint m_ibo; // Index Buffer Object
+    GLuint vao; // Vertex Array Object (settings)
+    GLuint vbo; // Vertex Buffer Object
+    GLuint ibo; // Index Buffer Object
     Designer *ds = nullptr;
-    std::vector<MeshDrawCommand> m_mesh_cmds;
+    std::vector<MeshDrawCommand> mesh_cmds;
     std::vector<Mesh> meshes;
     std::vector<Object> children;
 
@@ -48,12 +48,12 @@ public:
         /**
          * Reserve space for vectors' data on the heap
          */
-        m_mesh_cmds.reserve(meshes.size());
+        mesh_cmds.reserve(meshes.size());
 
         // Loop #2 - Maybe fix this
         for (const auto &mesh : meshes)
         {
-            m_mesh_cmds.emplace_back(current_indices, static_cast<GLuint>(mesh.indices.size()));
+            mesh_cmds.emplace_back(current_indices, static_cast<GLuint>(mesh.indices.size()));
 
             for (const auto &mesh_vert : mesh.vertices)
             {
@@ -72,22 +72,22 @@ public:
         /**
          * Upload data on the GPU (once!)
          */
-        ds->glGenVertexArrays(1, &m_vao);
-        ds->glGenBuffers(1, &m_vbo);
-        ds->glGenBuffers(1, &m_ibo);
+        ds->glGenVertexArrays(1, &vao);
+        ds->glGenBuffers(1, &vbo);
+        ds->glGenBuffers(1, &ibo);
 
-        ds->glBindVertexArray(m_vao);
+        ds->glBindVertexArray(vao);
 
         /**
          * Upload data to ARRAY_BUFFER
          */
-        ds->glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        ds->glBindBuffer(GL_ARRAY_BUFFER, vbo);
         ds->glBufferData(GL_ARRAY_BUFFER, merged_vertices.size() * sizeof(Vertex), merged_vertices.data(), isStatic ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
 
         /**
          * Upload data to ELEMENT_ARRAY_BUFFER
          */
-        ds->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+        ds->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
         ds->glBufferData(GL_ELEMENT_ARRAY_BUFFER, merged_indices.size() * sizeof(uint32_t), merged_indices.data(), isStatic ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
 
         /**
@@ -98,7 +98,7 @@ public:
 
         ds->glBindVertexArray(0);
 
-        m_mesh_cmds = std::move(m_mesh_cmds);
+        mesh_cmds = std::move(mesh_cmds);
 
         /**
          * Cleanup unused meshes
@@ -109,19 +109,19 @@ public:
 
     void draw()
     {
-        ds->glUseProgram(ds->m_shaderProgram);
+        ds->glUseProgram(ds->shaderProgram);
 
-        ds->glBindVertexArray(m_vao);
+        ds->glBindVertexArray(vao);
 
         /**
          * Enable uniforms
          */
 
-        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->m_shaderProgram, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
-        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->m_shaderProgram, "viewMatrix"), 1, GL_FALSE, glm::value_ptr(ds->m_camera->m_viewMatrix));
-        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->m_shaderProgram, "projectionMatrix"), 1, GL_FALSE, glm::value_ptr(ds->m_camera->m_projectionMatrix));
+        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->shaderProgram, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->shaderProgram, "viewMatrix"), 1, GL_FALSE, glm::value_ptr(ds->camera->viewMatrix));
+        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->shaderProgram, "projectionMatrix"), 1, GL_FALSE, glm::value_ptr(ds->camera->projectionMatrix));
 
-        for (auto &cmd : m_mesh_cmds)
+        for (auto &cmd : mesh_cmds)
         {
             uintptr_t p_indices = static_cast<uintptr_t>(cmd.indexOffset * sizeof(GLuint));
             ds->glDrawElements(GL_TRIANGLES, cmd.indexCount, GL_UNSIGNED_INT, reinterpret_cast<void *>(p_indices));

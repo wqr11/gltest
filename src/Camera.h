@@ -15,12 +15,12 @@ class Camera
 {
 private:
     /* ORBIT*/
-    float m_radius = 1.0f;
-    float m_scale = 1.0f;
-    float m_fov = 60.0f;
-    float m_theta = 0.0f;              // Horizontal angle (radians)
-    float m_phi = glm::radians(30.0f); // Vertical angle (radians)
-    glm::vec3 m_target = glm::vec3(0.0f);
+    float radius = 1.0f;
+    float scale = 1.0f;
+    float fov = 60.0f;
+    float theta = 0.0f;              // Horizontal angle (radians)
+    float phi = glm::radians(30.0f); // Vertical angle (radians)
+    glm::vec3 target = glm::vec3(0.0f);
 
     const glm::mat4 __orbitPerspectiveMatrix = glm::perspective(
         glm::radians(60.0f), // FOV
@@ -31,26 +31,26 @@ private:
 
     const glm::mat4 __orbitViewMatrix = glm::lookAt(
         glm::vec3(0.0f, 0.0f, 1.0f), // Position
-        m_target,                    // Target
-        m_up                         // Up
+        target,                      // Target
+        up                           // Up
     );
 
 public:
-    Camera() : m_up(glm::vec3(0.0f, 1.0f, 0.0f)),
-               m_viewMatrix(__orbitViewMatrix),
-               m_projectionMatrix(__orbitPerspectiveMatrix)
+    Camera() : up(glm::vec3(0.0f, 1.0f, 0.0f)),
+               viewMatrix(__orbitViewMatrix),
+               projectionMatrix(__orbitPerspectiveMatrix)
     {
     }
 
-    CameraMode m_camera_mode = CameraMode::ORBIT;
+    CameraMode camera_mode = CameraMode::ORBIT;
 
-    glm::vec3 m_up;
-    glm::mat4 m_viewMatrix;
-    glm::mat4 m_projectionMatrix;
+    glm::vec3 up;
+    glm::mat4 viewMatrix;
+    glm::mat4 projectionMatrix;
 
     void cycleCamera()
     {
-        switch (m_camera_mode)
+        switch (camera_mode)
         {
         case CameraMode::ORBIT:
             this->applyOrtho();
@@ -63,45 +63,45 @@ public:
 
     void applyOrtho()
     {
-        m_camera_mode = CameraMode::ORTHO;
+        camera_mode = CameraMode::ORTHO;
 
-        m_viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), m_up);
+        viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), up);
     }
 
     void applyOrbit()
     {
-        if (m_camera_mode != CameraMode::ORBIT)
-            m_projectionMatrix = __orbitPerspectiveMatrix;
+        if (camera_mode != CameraMode::ORBIT)
+            projectionMatrix = __orbitPerspectiveMatrix;
 
-        m_camera_mode = CameraMode::ORBIT;
+        camera_mode = CameraMode::ORBIT;
 
         glm::vec3 pos;
 
-        pos.x = m_target.x + m_radius * sin(m_theta) * cos(m_phi);
-        pos.y = m_target.y + m_radius * sin(m_phi);
-        pos.z = m_target.z + m_radius * cos(m_theta) * cos(m_phi);
+        pos.x = target.x + radius * sin(theta) * cos(phi);
+        pos.y = target.y + radius * sin(phi);
+        pos.z = target.z + radius * cos(theta) * cos(phi);
 
-        m_viewMatrix = glm::lookAt(pos, m_target, m_up);
+        viewMatrix = glm::lookAt(pos, target, up);
     }
 
     void deltaOrbit(float dt, float dp)
     {
-        m_theta -= dt;
-        m_phi = glm::clamp(m_phi + dp, 0.1f, glm::radians(89.0f));
+        theta -= dt;
+        phi = glm::clamp(phi + dp, 0.1f, glm::radians(89.0f));
 
         this->applyOrbit();
     }
 
     void deltaScale(float ds)
     {
-        m_fov = glm::clamp(m_fov * ds, 1.0f, 160.0f);
+        fov = glm::clamp(fov * ds, 1.0f, 160.0f);
 
-        m_projectionMatrix =
+        projectionMatrix =
             glm::perspective(
-                glm::radians(m_fov), // FOV
-                16.0f / 9.0f,        // Aspect ratio
-                0.1f,                // Near plane,
-                100.0f               // Far plane
+                glm::radians(fov), // FOV
+                16.0f / 9.0f,      // Aspect ratio
+                0.1f,              // Near plane,
+                100.0f             // Far plane
             );
     }
 };

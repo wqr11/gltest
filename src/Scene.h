@@ -7,15 +7,15 @@
 class Scene
 {
 public:
-    std::unique_ptr<Object> m_root;
+    std::unique_ptr<Object> root;
 
     void upload()
     {
-        m_root->upload();
+        root->upload();
     }
 
     void draw()
     {
-        m_root->draw();
+        root->draw();
     }
 };

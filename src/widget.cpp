@@ -16,15 +16,15 @@ TwglWidget::TwglWidget(QWidget *parent) : QOpenGLWidget(parent)
 
 void TwglWidget::initializeGL()
 {
-    m_ds = std::make_unique<Designer>();
-    m_scene = std::make_unique<Scene>();
-    m_scene->m_root = std::make_unique<Cube>(m_ds.get());
-    m_scene->upload();
+    ds = std::make_unique<Designer>();
+    scene = std::make_unique<Scene>();
+    scene->root = std::make_unique<Cube>(ds.get());
+    scene->upload();
 }
 
 void TwglWidget::resizeGL(int w, int h)
 {
-    m_ds->glViewport(0, 0, w, h);
+    ds->glViewport(0, 0, w, h);
 }
 
 void TwglWidget::paintGL()
@@ -32,25 +32,25 @@ void TwglWidget::paintGL()
     /**
      * Clear the screen
      */
-    m_ds->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    ds->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (m_scene)
-        m_scene->draw();
+    if (scene)
+        scene->draw();
 }
 
 void TwglWidget::mousePressEvent(QMouseEvent *event)
 {
-    m_mousePressed = true;
+    mousePressed = true;
 }
 
 void TwglWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    m_mousePressed = false;
+    mousePressed = false;
 }
 
 void TwglWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!m_mousePressed || !m_ds || !m_ds->m_camera)
+    if (!mousePressed || !ds || !ds->camera)
         return;
 
     float sensitivity = 0.01f;
@@ -58,19 +58,19 @@ void TwglWidget::mouseMoveEvent(QMouseEvent *event)
     float deltaPhi = 0;
     QPoint delta;
 
-    switch (m_ds->m_camera->m_camera_mode)
+    switch (ds->camera->camera_mode)
     {
     case CameraMode::ORBIT:
-        delta = event->pos() - m_lastMousePos;
-        m_lastMousePos = event->pos();
+        delta = event->pos() - lastMousePos;
+        lastMousePos = event->pos();
 
-        if (delta.manhattanLength() > m_stepPx)
+        if (delta.manhattanLength() > stepPx)
             return;
 
         deltaTheta = delta.x() * sensitivity;
         deltaPhi = delta.y() * sensitivity;
 
-        m_ds->m_camera->deltaOrbit(deltaTheta, deltaPhi);
+        ds->camera->deltaOrbit(deltaTheta, deltaPhi);
 
         update();
         break;
@@ -85,7 +85,7 @@ void TwglWidget::wheelEvent(QWheelEvent *event)
 
     float scaleFactor = 1.0f + (event->angleDelta().y() / 120.0f) * 0.1f;
 
-    m_ds->m_camera->deltaScale(scaleFactor);
+    ds->camera->deltaScale(scaleFactor);
 
     update();
 }
@@ -96,7 +96,7 @@ void TwglWidget::keyPressEvent(QKeyEvent *event)
     switch (event->key())
     {
     case Qt::Key_M:
-        m_ds->m_camera->cycleCamera();
+        ds->camera->cycleCamera();
         break;
     }
 
