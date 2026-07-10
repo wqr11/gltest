@@ -23,10 +23,6 @@ public:
      */
     GLuint m_vertexShader = 0;
     GLuint m_fragmentShader = 0;
-
-    // =============== METHODS ===============
-
-    std::unique_ptr<QString> loadShaderForUrl(QString url);
 };
 
 struct ShaderWithSize

@@ -115,8 +115,8 @@ public:
          */
 
         ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->m_shaderProgram, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
-        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->m_shaderProgram, "viewMatrix"), 1, GL_FALSE, glm::value_ptr(ds->m_camera->viewMatrix));
-        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->m_shaderProgram, "perspectiveMatrix"), 1, GL_FALSE, glm::value_ptr(ds->m_camera->perspectiveMatrix));
+        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->m_shaderProgram, "viewMatrix"), 1, GL_FALSE, glm::value_ptr(ds->m_camera->m_viewMatrix));
+        ds->glUniformMatrix4fv(ds->glGetUniformLocation(ds->m_shaderProgram, "projectionMatrix"), 1, GL_FALSE, glm::value_ptr(ds->m_camera->m_projectionMatrix));
 
         for (auto &cmd : m_mesh_cmds)
         {

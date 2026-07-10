@@ -3,7 +3,7 @@
 #include <QMouseEvent>
 #include <QTimer>
 
-#include "TwglWidget.h"
+#include "widget.h"
 
 TwglWidget::TwglWidget(QWidget *parent) : QOpenGLWidget(parent)
 {
@@ -53,20 +53,31 @@ void TwglWidget::mouseMoveEvent(QMouseEvent *event)
     if (!m_mousePressed || !m_ds || !m_ds->m_camera)
         return;
 
-    QPoint delta = event->pos() - m_lastMousePos;
-    m_lastMousePos = event->pos();
-
-    if (delta.manhattanLength() > m_stepPx)
-        return;
-
     float sensitivity = 0.01f;
+    float deltaTheta = 0;
+    float deltaPhi = 0;
+    QPoint delta;
 
-    float deltaTheta = delta.x() * sensitivity;
-    float deltaPhi = delta.y() * sensitivity;
+    switch (m_ds->m_camera->m_camera_mode)
+    {
+    case CameraMode::ORBIT:
+        delta = event->pos() - m_lastMousePos;
+        m_lastMousePos = event->pos();
 
-    m_ds->m_camera->deltaOrbit(deltaTheta, deltaPhi);
+        if (delta.manhattanLength() > m_stepPx)
+            return;
 
-    update();
+        deltaTheta = delta.x() * sensitivity;
+        deltaPhi = delta.y() * sensitivity;
+
+        m_ds->m_camera->deltaOrbit(deltaTheta, deltaPhi);
+
+        update();
+        break;
+
+    case CameraMode::ORTHO:
+        break;
+    }
 }
 
 void TwglWidget::wheelEvent(QWheelEvent *event)
@@ -75,6 +86,19 @@ void TwglWidget::wheelEvent(QWheelEvent *event)
     float scaleFactor = 1.0f + (event->angleDelta().y() / 120.0f) * 0.1f;
 
     m_ds->m_camera->deltaScale(scaleFactor);
+
+    update();
+}
+
+void TwglWidget::keyPressEvent(QKeyEvent *event)
+{
+
+    switch (event->key())
+    {
+    case Qt::Key_M:
+        m_ds->m_camera->cycleCamera();
+        break;
+    }
 
     update();
 }

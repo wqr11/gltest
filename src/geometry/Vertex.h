@@ -4,7 +4,7 @@
 
 using namespace glm;
 
-struct Vertex
+class Vertex
 {
 public:
     Vertex(float x, float y, float z) : position(x, y, z) {};

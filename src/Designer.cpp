@@ -1,35 +1,13 @@
 #include <QFile>
 #include <QMessageBox>
-#include <QProcessEnvironment>
 #include <QDir>
 #include "Designer.h"
 #include "Cube.h"
+#include "Shaders.h"
 
 Designer::~Designer()
 {
     glDeleteProgram(m_shaderProgram);
-}
-
-std::unique_ptr<QString> Designer::loadShaderForUrl(QString url)
-{
-    QFile shaderFile(url);
-
-    if (!shaderFile.open(QIODevice::ReadOnly))
-    {
-        qWarning() << "Failed to open shader for url: " << url;
-
-        QString title("Error");
-        QString text("Shader for url " + url + " was NOT found");
-        QMessageBox::critical(nullptr, title, text);
-
-        throw -1;
-    }
-
-    auto shader = std::make_unique<QString>(shaderFile.readAll());
-
-    shaderFile.close();
-
-    return shader;
 }
 
 Designer::Designer()
@@ -54,19 +32,11 @@ Designer::Designer()
     m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
     m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    const char *p_VERTEX_SHADER_SOURCE = const_cast<const char *>(VERTEX_SHADER_SOURCE);
+    const char *p_FRAGMENT_SHADER_SOURCE = const_cast<const char *>(FRAGMENT_SHADER_SOURCE);
 
-    auto vertexShaderSource = loadShaderForUrl(QDir().absoluteFilePath(env.value("TWGL_VERTEX_SHADER", "C:/Users/wqr/Desktop/gltest/shaders/vertex.glsl")));
-    auto vertexShaderStr = vertexShaderSource->toStdString();
-    auto vertexShaderCStr = vertexShaderStr.c_str();
-    auto vertexShaderSize = (GLint)vertexShaderSource->size();
-    glShaderSource(m_vertexShader, 1, &vertexShaderCStr, &vertexShaderSize);
-
-    auto fragmentShaderSource = loadShaderForUrl(QDir().absoluteFilePath(env.value("TWGL_FRAGMENT_SHADER", "C:/Users/wqr/Desktop/gltest/shaders/fragment.glsl")));
-    auto fragmentShaderStr = fragmentShaderSource->toStdString();
-    auto fragmentShaderCStr = fragmentShaderStr.c_str();
-    auto fragmentShaderSize = (GLint)fragmentShaderSource->size();
-    glShaderSource(m_fragmentShader, 1, &fragmentShaderCStr, &fragmentShaderSize);
+    glShaderSource(m_vertexShader, 1, &p_VERTEX_SHADER_SOURCE, const_cast<int32_t *>(&VERTEX_SHADER_SIZE));
+    glShaderSource(m_fragmentShader, 1, &p_FRAGMENT_SHADER_SOURCE, const_cast<int32_t *>(&FRAGMENT_SHADER_SIZE));
 
     glCompileShader(m_vertexShader);
     glCompileShader(m_fragmentShader);

@@ -3,7 +3,7 @@
 #include <QMainWindow>
 #include <memory>
 
-#include "TwglWidget.h"
+#include "widget.h"
 
 using namespace std;
 
