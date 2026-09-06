@@ -93,7 +93,7 @@ public:
             QMessageBox::critical(nullptr, title, text);
             throw std::runtime_error("Geometry shader error");
         }
-		
+
         /**
          * 3) Check FRAGMENT_SHADER compile errors
          */
@@ -142,6 +142,6 @@ public:
         glDeleteShader(fragmentShader);
 
         qDebug()
-            << "[APPLICATION] OpenGL initialized!";
+            << "[APPLICATION] Programs & shaders initialized!";
     }
 };

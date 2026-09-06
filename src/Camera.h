@@ -1,107 +1,97 @@
 #pragma once
 
-#include <glm/mat4x4.hpp>
-#include <glm/vec3.hpp>
-#include <glm/trigonometric.hpp>
 #include <glm/ext.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/trigonometric.hpp>
+#include <glm/vec3.hpp>
 
-enum CameraMode
-{
-    ORBIT = 0,
-    ORTHO = 1
-};
-
-class Camera
-{
+class Camera {
 private:
-    /* ORBIT*/
-    float radius = 1.0f;
-    float scale = 1.0f;
-    float fov = 60.0f;
-    float theta = 0.0f;              // Horizontal angle (radians)
-    float phi = glm::radians(30.0f); // Vertical angle (radians)
-    glm::vec3 target = glm::vec3(0.0f);
+  /* ORBIT*/
+  float radius = 1.0f;
+  float scale = 1.0f;
+  float fov = 60.0f;
+  float theta = 0.0f;              // Horizontal angle (radians)
+  float phi = glm::radians(30.0f); // Vertical angle (radians)
+  glm::vec3 target = glm::vec3(0.0f);
 
-    const glm::mat4 __orbitPerspectiveMatrix = glm::perspective(
-        glm::radians(60.0f), // FOV
-        16.0f / 9.0f,        // Aspect ratio
-        0.1f,                // Near plane,
-        100.0f               // Far plane
-    );
-
-    const glm::mat4 __orbitViewMatrix = glm::lookAt(
-        glm::vec3(0.0f, 0.0f, 1.0f), // Position
-        target,                      // Target
-        up                           // Up
-    );
+  glm::mat4 __orbitPerspectiveMatrix;
+  glm::mat4 __orbitViewMatrix;
 
 public:
-    Camera() : up(glm::vec3(0.0f, 1.0f, 0.0f)),
-               viewMatrix(__orbitViewMatrix),
-               projectionMatrix(__orbitPerspectiveMatrix)
-    {
+  enum class Mode : int { ORBIT = 0, ORTHO = 1 };
+
+  Camera::Mode camera_mode = Mode::ORBIT;
+  glm::mat4 viewMatrix;
+  glm::mat4 projectionMatrix;
+
+  glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+  Camera() {
+    this->__orbitViewMatrix =
+        glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), // Position
+                    target,                      // Target
+                    up                           // Up
+        );
+
+    this->__orbitPerspectiveMatrix =
+        glm::perspective(glm::radians(60.0f), // FOV
+                         16.0f / 9.0f,        // Aspect ratio
+                         0.1f,                // Near plane,
+                         100.0f               // Far plane
+        );
+
+    this->viewMatrix = this->__orbitViewMatrix;
+    this->projectionMatrix = this->__orbitPerspectiveMatrix;
+  }
+
+  void cycleCamera() {
+    switch (camera_mode) {
+    case Mode::ORBIT:
+      this->applyOrtho();
+      break;
+    case Mode::ORTHO:
+      this->applyOrbit();
+      break;
     }
+  }
 
-    CameraMode camera_mode = CameraMode::ORBIT;
+  void applyOrtho() {
+    camera_mode = Mode::ORTHO;
 
-    glm::vec3 up;
-    glm::mat4 viewMatrix;
-    glm::mat4 projectionMatrix;
+    viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
+                             glm::vec3(0.0f, 0.0f, 0.0f), up);
+  }
 
-    void cycleCamera()
-    {
-        switch (camera_mode)
-        {
-        case CameraMode::ORBIT:
-            this->applyOrtho();
-            break;
-        case CameraMode::ORTHO:
-            this->applyOrbit();
-            break;
-        }
-    }
+  void applyOrbit() {
+    if (camera_mode != Mode::ORBIT)
+      projectionMatrix = __orbitPerspectiveMatrix;
 
-    void applyOrtho()
-    {
-        camera_mode = CameraMode::ORTHO;
+    camera_mode = Mode::ORBIT;
 
-        viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), up);
-    }
+    glm::vec3 pos;
 
-    void applyOrbit()
-    {
-        if (camera_mode != CameraMode::ORBIT)
-            projectionMatrix = __orbitPerspectiveMatrix;
+    pos.x = target.x + radius * sin(theta) * cos(phi);
+    pos.y = target.y + radius * sin(phi);
+    pos.z = target.z + radius * cos(theta) * cos(phi);
 
-        camera_mode = CameraMode::ORBIT;
+    viewMatrix = glm::lookAt(pos, target, up);
+  }
 
-        glm::vec3 pos;
+  void deltaOrbit(float dt, float dp) {
+    theta -= dt;
+    phi = glm::clamp(phi + dp, 0.1f, glm::radians(89.0f));
 
-        pos.x = target.x + radius * sin(theta) * cos(phi);
-        pos.y = target.y + radius * sin(phi);
-        pos.z = target.z + radius * cos(theta) * cos(phi);
+    this->applyOrbit();
+  }
 
-        viewMatrix = glm::lookAt(pos, target, up);
-    }
+  void deltaScale(float ds) {
+    fov = glm::clamp(fov * ds, 1.0f, 160.0f);
 
-    void deltaOrbit(float dt, float dp)
-    {
-        theta -= dt;
-        phi = glm::clamp(phi + dp, 0.1f, glm::radians(89.0f));
-
-        this->applyOrbit();
-    }
-
-    void deltaScale(float ds)
-    {
-        fov = glm::clamp(fov * ds, 1.0f, 160.0f);
-
-        projectionMatrix =
-            glm::perspective(
-                glm::radians(fov), // FOV
-                16.0f / 9.0f,      // Aspect ratio
-                0.1f,              // Near plane,
-                100.0f             // Far plane
-            );
-    }
+    projectionMatrix = glm::perspective(glm::radians(fov), // FOV
+                                        16.0f / 9.0f,      // Aspect ratio
+                                        0.1f,              // Near plane,
+                                        100.0f             // Far plane
+    );
+  }
 };

@@ -4,3 +4,4 @@ f:
 
 default:
 	ninja -C build
+	./build/GLTEST.exe

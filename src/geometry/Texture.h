@@ -1,29 +1,28 @@
 #pragma once
 
-#include <QtGui/QOpenGLExtraFunctions>
 #include "Designer.h"
+#include <QtGui/QOpenGLExtraFunctions>
 
-class Texture
-{
+class Texture {
 public:
-    GLuint id;
-    uint32_t width, height;
+  GLuint id;
+  uint32_t width, height;
 
-    Designer *ds = nullptr;
+  Designer &ds;
 
-    Texture(Designer *__ds) : ds(__ds) {};
+  Texture(Designer &__ds) : ds(__ds) {};
 
-    void load(QByteArray &blob)
-    {
-        ds->glGenTextures(1, &id);
+  void load(QByteArray &blob) {
+    ds.glGenTextures(1, &id);
 
-        ds->glBindTexture(GL_TEXTURE_2D, id);
-        ds->glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    ds.glBindTexture(GL_TEXTURE_2D, id);
+    ds.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        ds->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, blob.data());
-        ds->glGenerateMipmap(GL_TEXTURE_2D);
-        // ds->glTexParameteri(GL_TEXTURE_2D, );
+    ds.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+                    GL_UNSIGNED_BYTE, blob.data());
+    ds.glGenerateMipmap(GL_TEXTURE_2D);
+    // ds.glTexParameteri(GL_TEXTURE_2D, );
 
-        ds->glBindTexture(GL_TEXTURE_2D, 0);
-    }
+    ds.glBindTexture(GL_TEXTURE_2D, 0);
+  }
 };
