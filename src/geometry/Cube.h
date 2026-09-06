@@ -1,7 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "Object.h"
+#include "./Object.h"
+#include "../Designer.h"
 
 class Cube : public Object
 {

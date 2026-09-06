@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include "Object.h"
-#include "Cube.h"
+#include "./geometry/Object.h"
+#include "./geometry/Cube.h"
 
 class Scene
 {

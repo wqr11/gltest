@@ -1,11 +1,9 @@
-#include <QApplication>
-#include <QOpenGLWidget>
-#include <QMainWindow>
+#include <QtWidgets/QApplication>
+#include <QtOpenGLWidgets/QOpenGLWidget>
+#include <QtWidgets/QMainWindow>
 #include <memory>
 
-#include "widget.h"
-
-using namespace std;
+#include "./gui/widget.h"
 
 int main(int argc, char **argv)
 {
@@ -15,7 +13,7 @@ int main(int argc, char **argv)
 
     QMainWindow w;
 
-    unique_ptr<TwglWidget> twgl_widget = make_unique<TwglWidget>(&w);
+    std::unique_ptr<TwglWidget> twgl_widget = std::make_unique<TwglWidget>(&w);
 
     w.setCentralWidget(twgl_widget.get());
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QOpenGLExtraFunctions>
+#include <QtGui/QOpenGLExtraFunctions>
 #include "Designer.h"
 
 class Texture
@@ -22,7 +22,7 @@ public:
 
         ds->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, blob.data());
         ds->glGenerateMipmap(GL_TEXTURE_2D);
-        ds->glTexParameteri(GL_TEXTURE_2D, );
+        // ds->glTexParameteri(GL_TEXTURE_2D, );
 
         ds->glBindTexture(GL_TEXTURE_2D, 0);
     }

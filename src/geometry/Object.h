@@ -5,7 +5,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Mesh.h"
-#include "Designer.h"
+#include "../Designer.h"
 
 class MeshDrawCommand
 {
@@ -24,7 +24,7 @@ protected:
     Designer *ds = nullptr;
     std::vector<MeshDrawCommand> mesh_cmds;
     std::vector<Mesh> meshes;
-    std::vector<Object> children;
+    // std::vector<Object> children;
 
 public:
     Object(Designer *__ds) : ds(__ds) {};
@@ -36,7 +36,9 @@ public:
      */
     void upload(bool isStatic = false)
     {
-        if (meshes.empty() && children.empty())
+        if (meshes.empty()
+            //  && children.empty()
+        )
             return;
 
         GLuint current_vertices = 0;

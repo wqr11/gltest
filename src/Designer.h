@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QOpenGLExtraFunctions>
-#include <QMessageBox>
+#include <QtGui/QOpenGLExtraFunctions>
+#include <QtWidgets/QMessageBox>
 #include <memory>
 #include "Camera.h"
 #include "Shaders.h"
@@ -93,7 +93,7 @@ public:
             QMessageBox::critical(nullptr, title, text);
             throw std::runtime_error("Geometry shader error");
         }
-
+		
         /**
          * 3) Check FRAGMENT_SHADER compile errors
          */

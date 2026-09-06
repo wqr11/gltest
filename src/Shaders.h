@@ -1,0 +1,27 @@
+typedef int int32_t;
+
+constexpr int32_t strlen_c(const char *str)
+{
+    int32_t size = 0;
+
+    while (*str++)
+    {
+        ++size;
+    }
+
+    return size;
+}
+
+constexpr char VERTEX_SHADER_SOURCE[] = {
+#include "./shaders/vertex.glsl"
+};
+constexpr char GEOMETRY_SHADER_SOURCE[] = {
+#include "./shaders/geometry.glsl"
+};
+constexpr char FRAGMENT_SHADER_SOURCE[] = {
+#include "./shaders/fragment.glsl"
+};
+
+constexpr int32_t VERTEX_SHADER_SIZE = strlen_c(VERTEX_SHADER_SOURCE);
+constexpr int32_t GEOMETRY_SHADER_SIZE = strlen_c(GEOMETRY_SHADER_SOURCE);
+constexpr int32_t FRAGMENT_SHADER_SIZE = strlen_c(FRAGMENT_SHADER_SOURCE);

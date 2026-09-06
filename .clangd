@@ -1,0 +1,15 @@
+CompileFlags:
+  Add:
+    [
+      -IC:/Users/wqr/Desktop/gltest/vcpkg_installed/x64-mingw-dynamic/include,
+      -IC:/Users/wqr/Desktop/gltest/src,
+      -IC:/Users/wqr/Desktop/gltest/src/geometry,
+      -IC:/Users/wqr/Desktop/gltest/src/gui,
+      -IC:/Users/wqr/Desktop/gltest/src/shaders,
+      -IC:/Users/wqr/Desktop/gltest/vcpkg_installed/x64-windows/include,
+      -IC:/Users/wqr/Desktop/gltest/vcpkg_installed/x64-windows/include/Qt6,
+      -IC:/Qt/6.12.0/llvm-mingw_64/include,
+      -std=c++17,
+    ]
+
+# Absolute paths only
