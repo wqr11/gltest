@@ -13,6 +13,7 @@ class TwglWidget : public QOpenGLWidget {
 
 protected:
   bool mousePressed = false;
+  bool skipped = false;
 
   int stepPx = 10;
 
