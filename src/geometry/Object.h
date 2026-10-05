@@ -2,6 +2,7 @@
 
 #include "../Designer.h"
 #include "Mesh.h"
+#include "Texture.h"
 #include <cstring>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/mat4x4.hpp>
@@ -23,10 +24,12 @@ protected:
   Designer &ds;
   std::vector<MeshDrawCommand> mesh_cmds;
   std::vector<Mesh> meshes;
+  std::shared_ptr<Texture> texture;
   // std::vector<Object> children;
 
 public:
-  Object(Designer &__ds) : ds(__ds) {};
+  Object(Designer &__ds, std::shared_ptr<Texture> __texture)
+      : ds(__ds), texture(__texture) {};
 
   glm::mat4 modelMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 
@@ -92,13 +95,19 @@ public:
         GL_ELEMENT_ARRAY_BUFFER, merged_indices.size() * sizeof(uint32_t),
         merged_indices.data(), isStatic ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
 
+    texture->load();
+
     /**
      * Enable in's
      */
     ds.glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                              (void *)offsetof(Vertex, position));
-    ds.glEnableVertexAttribArray(0);
 
+    ds.glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                             (void *)offsetof(Vertex, texCoords));
+
+    ds.glEnableVertexAttribArray(0);
+    ds.glEnableVertexAttribArray(1);
     ds.glBindVertexArray(0);
 
     /**
@@ -116,16 +125,22 @@ public:
     /**
      * Enable uniforms
      */
+    ds.glActiveTexture(GL_TEXTURE0);
+    texture->glTexture->bind();
 
     ds.glUniformMatrix4fv(
         ds.glGetUniformLocation(ds.shaderProgram, "modelMatrix"), 1, GL_FALSE,
         glm::value_ptr(modelMatrix));
+
     ds.glUniformMatrix4fv(
         ds.glGetUniformLocation(ds.shaderProgram, "viewMatrix"), 1, GL_FALSE,
         glm::value_ptr(ds.camera->viewMatrix));
+
     ds.glUniformMatrix4fv(
         ds.glGetUniformLocation(ds.shaderProgram, "projectionMatrix"), 1,
         GL_FALSE, glm::value_ptr(ds.camera->projectionMatrix));
+
+    ds.glUniform1i(ds.glGetUniformLocation(ds.shaderProgram, "fTexture"), 0);
 
     for (auto &cmd : mesh_cmds) {
       uintptr_t p_indices =

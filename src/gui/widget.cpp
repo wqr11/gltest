@@ -35,7 +35,10 @@ void TwglWidget::paintGL() {
 
 void TwglWidget::mousePressEvent(QMouseEvent *event) { mousePressed = true; }
 
-void TwglWidget::mouseReleaseEvent(QMouseEvent *event) { mousePressed = false; }
+void TwglWidget::mouseReleaseEvent(QMouseEvent *event) {
+  mousePressed = false;
+  skipped = false;
+}
 
 void TwglWidget::mouseMoveEvent(QMouseEvent *event) {
   if (!mousePressed || !ds || !ds->camera)
@@ -51,7 +54,8 @@ void TwglWidget::mouseMoveEvent(QMouseEvent *event) {
     delta = event->pos() - lastMousePos;
     lastMousePos = event->pos();
 
-    if (delta.manhattanLength() > stepPx) {
+    if (!skipped) {
+      skipped = true;
       return;
     }
 

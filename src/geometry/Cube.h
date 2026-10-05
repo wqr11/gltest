@@ -2,24 +2,24 @@
 
 #include "../Designer.h"
 #include "./Object.h"
+#include <memory>
 #include <vector>
-
 
 class Cube : public Object {
 
 public:
-  Cube(Designer &__ds) : Object(__ds) {
+  Cube(Designer &__ds) : Object(__ds, std::make_shared<Texture>(__ds)) {
     std::vector<Vertex> t_vertices = {
         // Front face (z = -0.5)
-        {-0.5f, -0.5f, -0.5f}, // 0
-        {-0.5f, 0.5f, -0.5f},  // 1
-        {0.5f, 0.5f, -0.5f},   // 2
-        {0.5f, -0.5f, -0.5f},  // 3
+        {-0.5f, -0.5f, -0.5f, 0.0f, 0.0f}, // 0
+        {-0.5f, 0.5f, -0.5f, 0.0f, 1.0f},  // 1
+        {0.5f, 0.5f, -0.5f, 1.0f, 1.0f},   // 2
+        {0.5f, -0.5f, -0.5f, 1.0f, 0.0f},  // 3
         // Back face (z = 0.5)
-        {-0.5f, -0.5f, 0.5f}, // 4
-        {-0.5f, 0.5f, 0.5f},  // 5
-        {0.5f, 0.5f, 0.5f},   // 6
-        {0.5f, -0.5f, 0.5f}   // 7
+        {-0.5f, -0.5f, 0.5f, 1.0f, 0.0f}, // 4
+        {-0.5f, 0.5f, 0.5f, 1.0f, 1.0f},  // 5
+        {0.5f, 0.5f, 0.5f, 0.0f, 1.0f},   // 6
+        {0.5f, -0.5f, 0.5f, 0.0f, 0.0f}   // 7
     };
 
     std::vector<uint32_t> t_indices = {// Front face
