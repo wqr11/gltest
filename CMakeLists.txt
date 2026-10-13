@@ -41,7 +41,22 @@ find_package(glm REQUIRED)
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.c*)
 
 qt_standard_project_setup()
-qt_add_executable(${TARGET} ${SOURCES})
+qt_add_executable(${TARGET}
+  ${SOURCES})
+
+qt_add_resources(${TARGET} "resources"
+  PREFIX "/"
+  FILES
+    textures/4po4mak.png
+)
+
+target_include_directories(${TARGET}
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/gui
+    ${PROJECT_SOURCE_DIR}/shaders
+    ${PROJECT_SOURCE_DIR}/geometry
+)
 
 target_link_libraries(${TARGET}
     PRIVATE

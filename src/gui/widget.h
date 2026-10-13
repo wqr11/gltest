@@ -1,22 +1,18 @@
 #pragma once
 
-#include <QtCore/QObject>
-#include <QtOpenGLWidgets/QtOpenGLWidgets>
-#include <memory>
-
-#include "../Camera.h"
-#include "../Designer.h"
+#include "../Renderer.h"
 #include "../Scene.h"
+#include <QtOpenGLWidgets/QtOpenGLWidgets>
 
 class TwglWidget : public QOpenGLWidget {
   Q_OBJECT
 
 protected:
-  bool mousePressed = false;
-
+  QPoint lastMousePos;
   int stepPx = 10;
 
-  QPoint lastMousePos;
+  bool mousePressed = false;
+  bool skipped = false;
 
   void mousePressEvent(QMouseEvent *event) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
@@ -28,7 +24,7 @@ public:
   TwglWidget(QWidget *parent = nullptr);
 
   std::unique_ptr<Scene> scene;
-  std::unique_ptr<Designer> ds;
+  std::unique_ptr<Renderer> r;
 
   void initializeGL() override;
   void resizeGL(int w, int h) override;

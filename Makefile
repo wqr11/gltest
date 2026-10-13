@@ -1,7 +1,16 @@
-f:
-	cmake -B build -G "Ninja" .
-	ninja -C build
+.PHONY: all default build run
 
 default:
-	ninja -C build
+	make build
+
+run:
 	./build/GLTEST.exe
+
+build:
+	ninja -C build
+	make run
+
+all:
+	cmake -B build -G "Ninja" .
+	ninja -C build
+	make default

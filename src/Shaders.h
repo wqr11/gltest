@@ -1,15 +1,13 @@
-typedef int int32_t;
+#pragma once
 
-constexpr int32_t strlen_c(const char *str)
-{
-    int32_t size = 0;
+using int32_t = int;
 
-    while (*str++)
-    {
-        ++size;
-    }
-
-    return size;
+constexpr int32_t strlen_c(const char *str) {
+  int32_t size = 0;
+  while (*str++) {
+    ++size;
+  }
+  return size;
 }
 
 constexpr char VERTEX_SHADER_SOURCE[] = {

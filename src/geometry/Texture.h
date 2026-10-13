@@ -1,28 +1,23 @@
 #pragma once
 
-#include "Designer.h"
+#include "Renderer.h"
 #include <QtGui/QOpenGLExtraFunctions>
+#include <QtOpenGL/QOpenGLTexture>
 
 class Texture {
 public:
   GLuint id;
   uint32_t width, height;
 
-  Designer &ds;
+  Renderer &r;
+  QOpenGLTexture *glTexture = nullptr;
 
-  Texture(Designer &__ds) : ds(__ds) {};
+  explicit Texture(Renderer &__r);
 
-  void load(QByteArray &blob) {
-    ds.glGenTextures(1, &id);
+  void load(const QString &path = ":textures/4po4mak.png");
 
-    ds.glBindTexture(GL_TEXTURE_2D, id);
-    ds.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    ds.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                    GL_UNSIGNED_BYTE, blob.data());
-    ds.glGenerateMipmap(GL_TEXTURE_2D);
-    // ds.glTexParameteri(GL_TEXTURE_2D, );
-
-    ds.glBindTexture(GL_TEXTURE_2D, 0);
+  inline void bind() {
+    if (glTexture)
+      glTexture->bind();
   }
 };
