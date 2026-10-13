@@ -10,14 +10,19 @@ public:
   uint32_t width, height;
 
   Renderer &r;
-  QOpenGLTexture *glTexture = nullptr;
+  QOpenGLTexture *map = nullptr;
 
   explicit Texture(Renderer &__r);
 
   void load(const QString &path = ":textures/4po4mak.png");
 
   inline void bind() {
-    if (glTexture)
-      glTexture->bind();
+    if (map)
+      map->bind();
+  }
+
+  inline void release() {
+    if (map)
+      map->release();
   }
 };

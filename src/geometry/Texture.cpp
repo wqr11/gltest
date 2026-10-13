@@ -1,16 +1,16 @@
 #include "Texture.h"
+#include <QtOpenGL/QOpenGLTexture>
 
 Texture::Texture(Renderer &__r) : r(__r) {};
 
 void Texture::load(const QString &path) {
-  glTexture = new QOpenGLTexture(QImage(path).flipped(Qt::Vertical),
-                                 QOpenGLTexture::GenerateMipMaps);
-  glTexture->setMagnificationFilter(
-      QOpenGLTexture::Filter::NearestMipMapNearest);
-  glTexture->setMinificationFilter(
-      QOpenGLTexture::Filter::NearestMipMapNearest);
+  map = new QOpenGLTexture(QImage(path).flipped(),
+                           QOpenGLTexture::GenerateMipMaps);
 
-  qDebug() << "LOADED TEXTURE" << glTexture->width() << glTexture->height();
+  map->setMagnificationFilter(QOpenGLTexture::Filter::NearestMipMapNearest);
+  map->setMinificationFilter(QOpenGLTexture::Filter::NearestMipMapNearest);
 
-  id = glTexture->textureId();
+  qDebug() << "LOADED TEXTURE" << map->width() << map->height();
+
+  id = map->textureId();
 }

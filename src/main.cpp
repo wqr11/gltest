@@ -30,6 +30,8 @@ int main(int argc, char **argv) {
   QVBoxLayout *leftWindowPanelLayout = new QVBoxLayout;
   QPushButton *btn1 = new QPushButton("set texture");
 
+  QPushButton *magicbtn = new QPushButton("magic");
+
   QFileDialog *fileDialog = new QFileDialog(window);
 
   QObject::connect(btn1, &QPushButton::clicked, btn1, [fileDialog]() {
@@ -41,6 +43,7 @@ int main(int argc, char **argv) {
                    [](const QList<QString> &files) { qDebug() << files; });
 
   leftWindowPanelLayout->addWidget(btn1);
+  leftWindowPanelLayout->addWidget(magicbtn);
   leftWindowPanel->setLayout(leftWindowPanelLayout);
 
   // Add widgets to windowLayout

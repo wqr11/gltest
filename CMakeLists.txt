@@ -16,6 +16,7 @@ if(WIN32)
 else()
   set(VCPKG_ROOT "/home/wqr/vcpkg" CACHE PATH "")
 
+  # Make use custom cmake toolchain
   set(
     CMAKE_TOOLCHAIN_FILE
     "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
@@ -23,6 +24,8 @@ else()
   )
 
   set(VCPKG_TARGET_TRIPLET "x64-linux")
+  set(CMAKE_C_COMPILER "/usr/bin/clang")
+  set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 endif()
 
 project(GLTEST VERSION 1.0.0 LANGUAGES CXX)
@@ -37,6 +40,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets)
 find_package(glm REQUIRED)
+
+add_compile_options(-O3)
 
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.c*)
 

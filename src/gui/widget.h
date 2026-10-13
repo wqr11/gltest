@@ -9,6 +9,7 @@ class TwglWidget : public QOpenGLWidget {
 
 protected:
   QPoint lastMousePos;
+  int arrows[4]{0};
   int stepPx = 10;
 
   bool mousePressed = false;
@@ -19,6 +20,7 @@ protected:
   void mouseMoveEvent(QMouseEvent *event) override;
   void wheelEvent(QWheelEvent *event) override;
   void keyPressEvent(QKeyEvent *event) override;
+  void keyReleaseEvent(QKeyEvent *event) override;
 
 public:
   TwglWidget(QWidget *parent = nullptr);
